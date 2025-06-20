@@ -1,12 +1,12 @@
-# SearchBar
+# Upstash Search UI
 
-A modern, accessible search interface with dialog-based overlays and real-time search. Built on cmdk, Radix UI primitives & styled with Tailwind.
+Beautifully-designed, accessible search components. Built on cmdk, Radix UI primitives & styled with Tailwind.
 
 ---
 
 ## Features
 
-- **Accessible**: Built on top of Radix UI primitives
+- **Accessible**: Built on top of [Radix UI primitives](https://www.radix-ui.com/) & [cmdk](https://cmdk.paco.me/) 
 - **Keyboard navigation**: Full keyboard support
 - **Search highlighting**: Automatic query highlighting in results
 - **Loading states**: Built-in skeleton loading states
