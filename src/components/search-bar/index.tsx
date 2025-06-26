@@ -90,10 +90,9 @@ function SearchContent({
 }: {
   title?: string
   description?: string
-  className?: string
 } & React.ComponentProps<typeof DialogContent>) {
   return (
-    <>
+    <div className="relative">
       <DialogHeader className="sr-only">
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
@@ -109,7 +108,7 @@ function SearchContent({
           {children}
         </Root>
       </DialogContent>
-    </>
+    </div>
   )
 }
 
@@ -175,13 +174,6 @@ function Input({
       searchContext?.setDebouncedQuery?.("")
       searchContext?.setImmediateQuery?.("")
     }
-  }
-
-  const handleClearSearch = () => {
-    setQuery("")
-    searchContext?.setDebouncedQuery?.("")
-    searchContext?.setImmediateQuery?.("")
-    inputRef.current?.focus()
   }
 
   return (
@@ -269,15 +261,17 @@ function Item({
   children,
   onSelect,
   value,
+  icon,
   ...props
 }: {
   className?: string
   children: React.ReactNode
   onSelect?: () => void
+  icon?: React.ReactNode | false
   value?: string
-}) {
+} & React.ComponentProps<typeof CommandPrimitive.Item>) {
   return (
-    <div className="relative">
+    <>
       <CommandPrimitive.Item
         data-slot="command-item"
         value={value}
@@ -290,41 +284,49 @@ function Item({
       >
         {children}
 
-        <div className="shrink-0 opacity-0 group-data-[selected=true]:opacity-100">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4 text-gray-400"
-          >
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
-        </div>
+        {icon === false ? null : Boolean(icon) ? (
+          <div className="shrink-0 opacity-0 group-data-[selected=true]:opacity-100">
+            {icon}
+          </div>
+        ) : (
+          <div className="shrink-0 opacity-0 group-data-[selected=true]:opacity-100">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="size-4 text-gray-400"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </div>
+        )}
       </CommandPrimitive.Item>
-    </div>
+    </>
   )
 }
 
 function Icon({
   children,
   className,
+  ...props
 }: {
   children: React.ReactNode
   className?: string
-}) {
+} & React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
         "flex items-center justify-center size-10 rounded-lg p-2.5 border border-gray-200 bg-white shrink-0",
         className
       )}
+      {...props}
     >
       {children}
     </div>
@@ -334,10 +336,13 @@ function Icon({
 function Title({
   children,
   className,
+  highlightClassName,
+  ...props
 }: {
   children: React.ReactNode
+  highlightClassName?: string
   className?: string
-}) {
+} & React.HTMLAttributes<HTMLParagraphElement>) {
   const searchContext = useSearchIndex()
   const query = searchContext?.debouncedQuery || ""
 
@@ -399,7 +404,12 @@ function Title({
             highlightedToken = (
               <>
                 {prefix}
-                <span className="underline underline-offset-3 decoration-2 decoration-emerald-500 text-emerald-500">
+                <span
+                  className={cn(
+                    "underline underline-offset-3 decoration-2 decoration-emerald-500 text-emerald-500",
+                    highlightClassName
+                  )}
+                >
                   {match}
                 </span>
                 {suffix}
@@ -422,7 +432,12 @@ function Title({
             highlightedToken = (
               <>
                 {prefix}
-                <span className="underline underline-offset-3 decoration-2 decoration-emerald-500 text-emerald-500">
+                <span
+                  className={cn(
+                    "underline underline-offset-3 decoration-2 decoration-emerald-500 text-emerald-500",
+                    highlightClassName
+                  )}
+                >
                   {match}
                 </span>
                 {suffix}
@@ -437,7 +452,10 @@ function Title({
         typeof highlightedToken === "string" ? (
           <span
             key={i}
-            className="underline underline-offset-3 decoration-2 decoration-emerald-500 text-emerald-500"
+            className={cn(
+              "underline underline-offset-3 decoration-2 decoration-emerald-500 text-emerald-500",
+              highlightClassName
+            )}
           >
             {token}
           </span>
@@ -454,41 +472,47 @@ function Title({
 
   if (query && typeof children === "string") {
     return (
-      <div className={cn("font-medium text-gray-900", className)}>
+      <p className={cn("font-medium text-gray-900", className)} {...props}>
         {highlightMatches(content, query)}
-      </div>
+      </p>
     )
   }
 
   return (
-    <div className={cn("font-semibold text-gray-900", className)}>
+    <p className={cn("font-medium text-gray-900", className)} {...props}>
       {children}
-    </div>
+    </p>
   )
 }
 
 function Subtitle({
   children,
   className,
+  ...props
 }: {
   children: React.ReactNode
   className?: string
-}) {
+} & React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <div className={cn("text-xs text-gray-500 mt-0.5", className)}>
+    <p className={cn("text-xs text-gray-500 mt-0.5", className)} {...props}>
       {children}
-    </div>
+    </p>
   )
 }
 
 function ItemContent({
   children,
   className,
+  ...props
 }: {
   children: React.ReactNode
   className?: string
-}) {
-  return <div className={cn("flex-1 min-w-0", className)}>{children}</div>
+} & React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("flex-1 min-w-0", className)} {...props}>
+      {children}
+    </div>
+  )
 }
 
 function List({
@@ -613,19 +637,14 @@ function Results<T = any>({
 }
 
 export const SearchBar = {
-  Root,
   Dialog: SearchDialog,
-  Content: SearchContent,
-  Trigger: SearchTrigger,
+  DialogContent: SearchContent,
+  DialogTrigger: SearchTrigger,
   Input,
-  Empty,
-  Group,
-  Item,
-  Icon,
-  Title,
-  Subtitle,
-  ItemContent,
+  Result: Item,
+  ResultIcon: Icon,
+  ResultTitle: Title,
+  ResultContent: ItemContent,
   Separator,
-  List,
   Results,
 }
