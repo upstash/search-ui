@@ -1,6 +1,6 @@
 {
   "name": "@upstash/search-ui",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "Modern React UI components for Upstash Search",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
